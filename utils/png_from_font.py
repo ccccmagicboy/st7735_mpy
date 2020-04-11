@@ -14,11 +14,12 @@ import os
 import importlib
 import png
 import argparse
+from importlib import util
 
 def create_png(font_file_name, png_file_name):
 
-        module_spec = importlib.util.spec_from_file_location('font', font_file_name)
-        font = importlib.util.module_from_spec(module_spec)
+        module_spec = util.spec_from_file_location('font', font_file_name)
+        font = util.module_from_spec(module_spec)
         module_spec.loader.exec_module(font)
         char_count = font.LAST - font.FIRST
         column_count = 16
@@ -62,8 +63,8 @@ def main():
 
     for file_name in os.listdir(args.font_directory):
         if file_name.endswith('.py'):
-            font_file_name = args.font_directory+'/'+file_name
-            png_file_name = args.png_directory+'/'+os.path.splitext(file_name)[0]+'.png'
+            font_file_name = args.font_directory+'\\'+file_name
+            png_file_name = args.png_directory+'\\'+os.path.splitext(file_name)[0]+'.png'
             create_png(font_file_name, png_file_name)
 
 main()
