@@ -13,7 +13,7 @@ global display
 
 def init():
     global display
-    spi = machine.SPI(2, baudrate=10000000, polarity=1, phase=1, sck=Pin(32), mosi=Pin(5))
+    spi = machine.SPI(1, baudrate=30000000, polarity=0, phase=0, sck=Pin(32), mosi=Pin(5))
     display = st7735.ST7735(spi, 80, 160, dc=machine.Pin(4, machine.Pin.OUT))
     display.init()
 
@@ -28,7 +28,8 @@ def random_color_fill():
             ),
         )
         # Pause 1 seconds.
-        time.sleep(1)
+        time.sleep_ms(200)
+        
 def random_text():
     global display
     while True:
