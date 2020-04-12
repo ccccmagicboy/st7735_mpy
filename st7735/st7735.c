@@ -472,8 +472,8 @@ STATIC void set_rotation(st7735_ST7735_obj_t *self) {
         madctl_value |= ST7735_MADCTL_MX | ST7735_MADCTL_MV;
         self->width = self->display_height;
         self->height = self->display_width;
-        self->xstart = ST7735_80x160_YSTART;
-        self->ystart = ST7735_80x160_XSTART;
+        self->xstart = 20;
+        self->ystart = 20;
     }
     else if (self->rotation == 2) {        // Inverted Portrait
         madctl_value |= ST7735_MADCTL_MX | ST7735_MADCTL_MY;
@@ -486,11 +486,13 @@ STATIC void set_rotation(st7735_ST7735_obj_t *self) {
         madctl_value |= ST7735_MADCTL_MV | ST7735_MADCTL_MY;
         self->width = self->display_height;
         self->height = self->display_width;
-        self->xstart = ST7735_80x160_YSTART;
-        self->ystart = ST7735_80x160_XSTART;
+        self->xstart = 30;
+        self->ystart = 30;
     }
     const uint8_t madctl[] = { madctl_value };
     write_cmd(self, ST7735_MADCTL, madctl, 1);
+    
+    set_window(self, 0, 0, self->width - 1, self->height - 1);
 }
 
 
@@ -519,8 +521,43 @@ STATIC mp_obj_t st7735_ST7735_height(mp_obj_t self_in) {
 }
 
 MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_height_obj, st7735_ST7735_height);
+////////////////////////////////////////////////////////////////////////////////////
+STATIC mp_obj_t st7735_ST7735_get_xstart(mp_obj_t self_in) {
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    return mp_obj_new_int(self->xstart);
+}
 
+MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_get_xstart_obj, st7735_ST7735_get_xstart);
 
+STATIC mp_obj_t st7735_ST7735_get_ystart(mp_obj_t self_in) {
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    return mp_obj_new_int(self->ystart);
+}
+
+MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_get_ystart_obj, st7735_ST7735_get_ystart);
+////////////////////////////////////////////////////////////////////////////////////
+STATIC mp_obj_t st7735_ST7735_set_xstart(mp_obj_t self_in, mp_obj_t start) {
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    
+    mp_int_t temp = mp_obj_get_int(start);
+    self->xstart = temp;
+    
+    return mp_const_none;
+}
+
+MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_set_xstart_obj, st7735_ST7735_set_xstart);
+
+STATIC mp_obj_t st7735_ST7735_set_ystart(mp_obj_t self_in, mp_obj_t start) {
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    
+    mp_int_t temp = mp_obj_get_int(start);
+    self->ystart = temp;
+    
+    return mp_const_none;
+}
+
+MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_set_ystart_obj, st7735_ST7735_set_ystart);
+////////////////////////////////////////////////////////////////////////////////////
 STATIC mp_obj_t st7735_ST7735_vscrdef(size_t n_args, const mp_obj_t *args) {
     // st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
     // mp_int_t tfa = mp_obj_get_int(args[1]);
@@ -720,7 +757,10 @@ STATIC const mp_rom_map_elem_t st7735_ST7735_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_height), MP_ROM_PTR(&st7735_ST7735_height_obj) },
     { MP_ROM_QSTR(MP_QSTR_vscrdef), MP_ROM_PTR(&st7735_ST7735_vscrdef_obj) },
     { MP_ROM_QSTR(MP_QSTR_vscsad), MP_ROM_PTR(&st7735_ST7735_vscsad_obj) },
-
+    { MP_ROM_QSTR(MP_QSTR_get_xstart), MP_ROM_PTR(&st7735_ST7735_get_xstart_obj) },       //new
+    { MP_ROM_QSTR(MP_QSTR_get_ystart), MP_ROM_PTR(&st7735_ST7735_get_ystart_obj) },       //new
+    { MP_ROM_QSTR(MP_QSTR_set_xstart), MP_ROM_PTR(&st7735_ST7735_set_xstart_obj) },       //new
+    { MP_ROM_QSTR(MP_QSTR_set_ystart), MP_ROM_PTR(&st7735_ST7735_set_ystart_obj) },       //new       
 };
 
 STATIC MP_DEFINE_CONST_DICT(st7735_ST7735_locals_dict, st7735_ST7735_locals_dict_table);
