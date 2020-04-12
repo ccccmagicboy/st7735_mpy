@@ -460,7 +460,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_text_obj, 5, 7, st7735_
 
 
 STATIC void set_rotation(st7735_ST7735_obj_t *self) {
-    uint8_t madctl_value = ST7735_MADCTL_RGB;
+    uint8_t madctl_value = ST7735_MADCTL_BGR;
 
     if (self->rotation == 0) {              // Portrait
         self->width = self->display_width;
@@ -472,8 +472,8 @@ STATIC void set_rotation(st7735_ST7735_obj_t *self) {
         madctl_value |= ST7735_MADCTL_MX | ST7735_MADCTL_MV;
         self->width = self->display_height;
         self->height = self->display_width;
-        self->xstart = 20;
-        self->ystart = 20;
+        self->xstart = ST7735_80x160_YSTART;
+        self->ystart = ST7735_80x160_XSTART;
     }
     else if (self->rotation == 2) {        // Inverted Portrait
         madctl_value |= ST7735_MADCTL_MX | ST7735_MADCTL_MY;
@@ -486,12 +486,11 @@ STATIC void set_rotation(st7735_ST7735_obj_t *self) {
         madctl_value |= ST7735_MADCTL_MV | ST7735_MADCTL_MY;
         self->width = self->display_height;
         self->height = self->display_width;
-        self->xstart = 30;
-        self->ystart = 30;
+        self->xstart = ST7735_80x160_YSTART;
+        self->ystart = ST7735_80x160_XSTART;
     }
     const uint8_t madctl[] = { madctl_value };
     write_cmd(self, ST7735_MADCTL, madctl, 1);
-    
     set_window(self, 0, 0, self->width - 1, self->height - 1);
 }
 
@@ -641,8 +640,8 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
     self->ystart = ST7735_80x160_YSTART;
     set_rotation(self);
 /////////////////////////////////////////////////////////////////////////////////////////////////////    
-    // write_cmd(self, ST7735_INVON, NULL, 0);   //P124, Display Inversion On
-    // mp_hal_delay_ms(10);
+    write_cmd(self, ST7735_INVON, NULL, 0);   //P124, Display Inversion On
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
     uint8_t windowLocData[4] = {0x00, 0x00, 0x00, 0x00};
     windowLocData[0] = 0x00;
