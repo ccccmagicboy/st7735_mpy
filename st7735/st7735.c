@@ -545,7 +545,7 @@ STATIC mp_obj_t st7735_ST7735_set_xstart(mp_obj_t self_in, mp_obj_t start) {
     return mp_const_none;
 }
 
-MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_set_xstart_obj, st7735_ST7735_set_xstart);
+MP_DEFINE_CONST_FUN_OBJ_2(st7735_ST7735_set_xstart_obj, st7735_ST7735_set_xstart);
 
 STATIC mp_obj_t st7735_ST7735_set_ystart(mp_obj_t self_in, mp_obj_t start) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
@@ -556,7 +556,7 @@ STATIC mp_obj_t st7735_ST7735_set_ystart(mp_obj_t self_in, mp_obj_t start) {
     return mp_const_none;
 }
 
-MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_set_ystart_obj, st7735_ST7735_set_ystart);
+MP_DEFINE_CONST_FUN_OBJ_2(st7735_ST7735_set_ystart_obj, st7735_ST7735_set_ystart);
 ////////////////////////////////////////////////////////////////////////////////////
 STATIC mp_obj_t st7735_ST7735_vscrdef(size_t n_args, const mp_obj_t *args) {
     // st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
