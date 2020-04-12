@@ -531,13 +531,13 @@ MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_height_obj, st7735_ST7735_height);
 
 
 STATIC mp_obj_t st7735_ST7735_vscrdef(size_t n_args, const mp_obj_t *args) {
-    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
-    mp_int_t tfa = mp_obj_get_int(args[1]);
-    mp_int_t vsa = mp_obj_get_int(args[2]);
-    mp_int_t bfa = mp_obj_get_int(args[3]);
+    // st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
+    // mp_int_t tfa = mp_obj_get_int(args[1]);
+    // mp_int_t vsa = mp_obj_get_int(args[2]);
+    // mp_int_t bfa = mp_obj_get_int(args[3]);
 
-    uint8_t buf[6] = {(tfa) >> 8, (tfa) & 0xFF, (vsa) >> 8, (vsa) & 0xFF, (bfa) >> 8, (bfa) & 0xFF};
-    write_cmd(self, ST7735_VSCRDEF, buf, 6);
+    // uint8_t buf[6] = {(tfa) >> 8, (tfa) & 0xFF, (vsa) >> 8, (vsa) & 0xFF, (bfa) >> 8, (bfa) & 0xFF};
+    // write_cmd(self, ST7735_VSCRDEF, buf, 6);
 
     return mp_const_none;
 }
@@ -616,7 +616,7 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
     write_cmd(self, ST7735_INVON, NULL, 0);   //P124, Display Inversion On
     mp_hal_delay_ms(1);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-    const uint8_t windowLocData[4] = {0x00, 0x00, 0x00, 0x00};
+    uint8_t windowLocData[4] = {0x00, 0x00, 0x00, 0x00};
     windowLocData[0] = 0x00
     windowLocData[1] = self.xstart
     windowLocData[2] = 0x00
