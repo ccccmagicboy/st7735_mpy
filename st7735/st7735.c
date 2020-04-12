@@ -42,8 +42,8 @@
 #define CS_HIGH()    { if(self->cs) {mp_hal_pin_write(self->cs, 1);} }
 #define DC_LOW()     (mp_hal_pin_write(self->dc, 0))
 #define DC_HIGH()    (mp_hal_pin_write(self->dc, 1))
-#define RESET_LOW()  { if(self->reset) (mp_hal_pin_write(self->reset, 0);} }
-#define RESET_HIGH() { if(self->reset) (mp_hal_pin_write(self->reset, 1);} }
+#define RESET_LOW()  { if(self->reset) {mp_hal_pin_write(self->reset, 0);} }
+#define RESET_HIGH() { if(self->reset) {mp_hal_pin_write(self->reset, 1);} }
 
 
 STATIC void write_spi(mp_obj_base_t *spi_obj, const uint8_t *buf, int len) {
