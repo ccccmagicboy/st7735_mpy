@@ -5,19 +5,13 @@
 extern "C" {
 #endif
 
-#define ST7735_240x240_XSTART 0
-#define ST7735_240x240_YSTART 0
-#define ST7735_135x240_XSTART 52
-#define ST7735_135x240_YSTART 40
-
+#define ST7735_80x160_XSTART 26
+#define ST7735_80x160_YSTART 1
 
 // color modes
-#define COLOR_MODE_65K      0x50
-#define COLOR_MODE_262K     0x60
 #define COLOR_MODE_12BIT    0x03
 #define COLOR_MODE_16BIT    0x05
 #define COLOR_MODE_18BIT    0x06
-#define COLOR_MODE_16M      0x07
 
 // COMMAND REGISTER ADDRESS
 #define ST7735_NOP     0x00
@@ -90,6 +84,7 @@ extern "C" {
 #define ST7735_MADCTL_MV  0x20  // Page/Column Order
 #define ST7735_MADCTL_ML  0x10  // Line Address Order
 #define ST7735_MADCTL_MH  0x04  // Display Data Latch Order
+
 #define ST7735_MADCTL_RGB 0x00
 #define ST7735_MADCTL_BGR 0x08
 

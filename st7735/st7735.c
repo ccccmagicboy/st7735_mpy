@@ -174,14 +174,15 @@ STATIC void fast_vline(st7735_ST7735_obj_t *self, uint8_t x, uint8_t y, uint16_t
 
 STATIC mp_obj_t st7735_ST7735_hard_reset(mp_obj_t self_in) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
-
+    
+    DC_LOW();
     CS_LOW();
     RESET_HIGH();
-    mp_hal_delay_ms(50);
+    mp_hal_delay_ms(1);
     RESET_LOW();
-    mp_hal_delay_ms(50);
+    mp_hal_delay_ms(1);
     RESET_HIGH();
-    mp_hal_delay_ms(150);
+    mp_hal_delay_ms(1);
     CS_HIGH();
     return mp_const_none;
 }
@@ -191,7 +192,7 @@ STATIC mp_obj_t st7735_ST7735_soft_reset(mp_obj_t self_in) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
 
     write_cmd(self, ST7735_SWRESET, NULL, 0);
-    mp_hal_delay_ms(150);
+    mp_hal_delay_ms(1);
     return mp_const_none;
 }
 
@@ -459,7 +460,8 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_text_obj, 5, 7, st7735_
 
 
 STATIC void set_rotation(st7735_ST7735_obj_t *self) {
-    uint8_t madctl_value = ST7735_MADCTL_RGB;
+    //uint8_t madctl_value = ST7735_MADCTL_RGB;
+    uint8_t madctl_value = ST7735_MADCTL_BGR;
 
     if (self->rotation == 0) {              // Portrait
         self->width = self->display_width;
@@ -558,21 +560,82 @@ MP_DEFINE_CONST_FUN_OBJ_2(st7735_ST7735_vscsad_obj, st7735_ST7735_vscsad);
 
 STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    st7735_ST7735_hard_reset(self_in);
-    st7735_ST7735_soft_reset(self_in);
-    write_cmd(self, ST7735_SLPOUT, NULL, 0);
-
-    const uint8_t color_mode[] = { COLOR_MODE_65K | COLOR_MODE_16BIT};
-    write_cmd(self, ST7735_COLMOD, color_mode, 1);
-    mp_hal_delay_ms(10);
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    st7735_ST7735_hard_reset(self_in);          //hard reset
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    st7735_ST7735_soft_reset(self_in);          //soft reset
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    write_cmd(self, ST7735_SLPOUT, NULL, 0);    //sleep out
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    const uint8_t color_mode[] = {COLOR_MODE_16BIT};
+    write_cmd(self, ST7735_COLMOD, color_mode, 1);  //p150, set 16-bit mode
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t frame_rate_mode[] = {0x01, 0x2C, 0x2D};
+    write_cmd(self, ST7735_FRMCTR1, frame_rate_mode, 3);    //p159, Frame rate control.
+    write_cmd(self, ST7735_FRMCTR2, frame_rate_mode, 3);    //p160
+    const uint8_t frame_rate_mode_[] = {0x01, 0x2C, 0x2D, 0x01, 0x2C, 0x2D};
+    write_cmd(self, ST7735_FRMCTR3, frame_rate_mode_, 6);    //p160
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t inversion_mode[] = {0x07};
+    write_cmd(self, ST7735_INVCTR, inversion_mode, 1);  //p162, Display Inversion Control
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    const uint8_t power_mode1[] = {0xA2, 0x02, 0x84};
+    write_cmd(self, ST7735_PWCTR1, power_mode1, 3);  //p163, Power Control 1
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t power_mode2[] = {0xC5};
+    write_cmd(self, ST7735_PWCTR2, power_mode2, 1);  //p165, Power Control 2
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t power_mode3[] = {0x0A, 0x00};
+    write_cmd(self, ST7735_PWCTR3, power_mode3, 2);  //p167, Power Control 3
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t power_mode4[] = {0x8A, 0x2A};
+    write_cmd(self, ST7735_PWCTR4, power_mode4, 2);  //p169, Power Control 4
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t power_mode5[] = {0x8A, 0xEE};
+    write_cmd(self, ST7735_PWCTR5, power_mode5, 2);  //p171, Power Control 5
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    const uint8_t VMCTR1_mode[] = {0x0E};
+    write_cmd(self, ST7735_VMCTR1, VMCTR1_mode, 1);  //p173, VCOM Control 1
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    write_cmd(self, ST7735_INVOFF, NULL, 0);    //P123, Display Inversion Off 
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    self->xstart = ST7735_80x160_XSTART;
+    self->ystart = ST7735_80x160_YSTART;
     set_rotation(self);
-
-    write_cmd(self, ST7735_INVON, NULL, 0);
-    mp_hal_delay_ms(10);
-    write_cmd(self, ST7735_NORON, NULL, 0);
-    mp_hal_delay_ms(10);
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
+    write_cmd(self, ST7735_INVON, NULL, 0);   //P124, Display Inversion On
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    const uint8_t windowLocData[4] = {0x00, 0x00, 0x00, 0x00};
+    windowLocData[0] = 0x00
+    windowLocData[1] = self.xstart
+    windowLocData[2] = 0x00
+    windowLocData[3] = self.width + self.xstart
+    write_cmd(self, ST7735_CASET, windowLocData, 4);  //p128, Column address set.
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    windowLocData[1] = self.ystart
+    windowLocData[3] = self.height + self.ystart
+    write_cmd(self, ST7735_CASET, windowLocData, 4);  //p130, Row address set.
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    const uint8_t dataGMCTRP[] = {0x02, 0x1C, 0x07, 0x12, 0x37, 0x32, 0x29, 0x2D, 0x29, 0x25, 0x2B, 0x39, 0x00, 0x01, 0x03, 0x10};
+    write_cmd(self, ST7735_GMCTRP1, dataGMCTRP, 16);  //p182, Gamma (‘+’polarity) Correction Characteristics Setting
+    const uint8_t dataGMCTRN[] = {0x03, 0x1D, 0x07, 0x06, 0x2E, 0x2C, 0x29, 0x2D, 0x2E, 0x2E, 0x37, 0x3F, 0x00, 0x00, 0x02, 0x10};
+    write_cmd(self, ST7735_GMCTRN1, dataGMCTRN, 16);  //p184, Gamma (‘-’polarity) Correction Characteristics Setting
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////        
+    write_cmd(self, ST7735_NORON, NULL, 0);     //P122, Normal Display Mode On
+    mp_hal_delay_ms(1);    
+/////////////////////////////////////////////////////////////////////////////////////////////////////
     const mp_obj_t args[] = {
         self_in,
         mp_obj_new_int(0),
@@ -582,13 +645,13 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
         mp_obj_new_int(BLACK)
     };
     st7735_ST7735_fill_rect(6, args);
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
     if (self->backlight)
         mp_hal_pin_write(self->backlight, 1);
-
-    write_cmd(self, ST7735_DISPON, NULL, 0);
-    mp_hal_delay_ms(500);
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    write_cmd(self, ST7735_DISPON, NULL, 0);     //P127, Display On
+    mp_hal_delay_ms(1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(st7735_ST7735_init_obj, st7735_ST7735_init);
@@ -713,8 +776,8 @@ mp_obj_t st7735_ST7735_make_new(const mp_obj_type_t *type,
     self->height = args[ARG_height].u_int;
     self->rotation = args[ARG_rotation].u_int % 4;
 
-    if ((self->display_height != 240 && self->display_height != 320) || (self->display_width != 240  && self->display_width != 135)) {
-        mp_raise_ValueError("Unsupported display. Only 240x240 and 135x240 and 240x320 are supported");
+    if ((self->display_height != 160 && self->display_height != 160) || (self->display_width != 80  && self->display_width != 80)) {
+        mp_raise_ValueError("Unsupported display. Only 80x160 is supported");
     }
 
     if (args[ARG_reset].u_obj == MP_OBJ_NULL
