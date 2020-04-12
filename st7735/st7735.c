@@ -618,13 +618,13 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
     uint8_t windowLocData[4] = {0x00, 0x00, 0x00, 0x00};
     windowLocData[0] = 0x00;
-    windowLocData[1] = self.xstart;
+    windowLocData[1] = self->xstart;
     windowLocData[2] = 0x00;
-    windowLocData[3] = self.width + self.xstart;
+    windowLocData[3] = self->width + self->xstart;
     write_cmd(self, ST7735_CASET, windowLocData, 4);  //p128, Column address set.
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-    windowLocData[1] = self.ystart;
-    windowLocData[3] = self.height + self.ystart;
+    windowLocData[1] = self->ystart;
+    windowLocData[3] = self->height + self->ystart;
     write_cmd(self, ST7735_CASET, windowLocData, 4);  //p130, Row address set.
 /////////////////////////////////////////////////////////////////////////////////////////////////////
     const uint8_t dataGMCTRP[] = {0x02, 0x1C, 0x07, 0x12, 0x37, 0x32, 0x29, 0x2D, 0x29, 0x25, 0x2B, 0x39, 0x00, 0x01, 0x03, 0x10};
