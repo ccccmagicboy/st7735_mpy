@@ -42,8 +42,8 @@
 #define CS_HIGH()    { if(self->cs) {mp_hal_pin_write(self->cs, 1);} }
 #define DC_LOW()     (mp_hal_pin_write(self->dc, 0))
 #define DC_HIGH()    (mp_hal_pin_write(self->dc, 1))
-#define RESET_LOW()  (mp_hal_pin_write(self->reset, 0))
-#define RESET_HIGH() (mp_hal_pin_write(self->reset, 1))
+#define RESET_LOW()  { if(self->reset) (mp_hal_pin_write(self->reset, 0);} }
+#define RESET_HIGH() { if(self->reset) (mp_hal_pin_write(self->reset, 1);} }
 
 
 STATIC void write_spi(mp_obj_base_t *spi_obj, const uint8_t *buf, int len) {
@@ -589,10 +589,13 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
 /////////////////////////////////////////////////////////////////////////////////////////////////////    
     st7735_ST7735_hard_reset(self_in);          //hard reset
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////    
     st7735_ST7735_soft_reset(self_in);          //soft reset
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////    
     write_cmd(self, ST7735_SLPOUT, NULL, 0);    //sleep out
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
     const uint8_t color_mode[] = {COLOR_MODE_16BIT};
     write_cmd(self, ST7735_COLMOD, color_mode, 1);  //p150, set 16-bit mode
@@ -639,6 +642,7 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
     self->xstart = ST7735_80x160_XSTART;
     self->ystart = ST7735_80x160_YSTART;
     set_rotation(self);
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////    
     write_cmd(self, ST7735_INVON, NULL, 0);   //P124, Display Inversion On
     mp_hal_delay_ms(10);
@@ -674,9 +678,11 @@ STATIC mp_obj_t st7735_ST7735_init(mp_obj_t self_in) {
         mp_obj_new_int(BLACK)
     };
     st7735_ST7735_fill_rect(6, args);
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
     if (self->backlight)
         mp_hal_pin_write(self->backlight, 1);
+    mp_hal_delay_ms(10);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
     write_cmd(self, ST7735_DISPON, NULL, 0);     //P127, Display On
     mp_hal_delay_ms(10);
@@ -812,14 +818,15 @@ mp_obj_t st7735_ST7735_make_new(const mp_obj_type_t *type,
         mp_raise_ValueError("Unsupported display. Only 80x160 is supported");
     }
 
-    if (args[ARG_reset].u_obj == MP_OBJ_NULL
-        || args[ARG_dc].u_obj == MP_OBJ_NULL) {
-        mp_raise_ValueError("must specify all of reset/dc pins");
+    if (args[ARG_dc].u_obj == MP_OBJ_NULL) {
+        mp_raise_ValueError("must specify dc pins");
     }
 
-    self->reset = mp_hal_get_pin_obj(args[ARG_reset].u_obj);
     self->dc = mp_hal_get_pin_obj(args[ARG_dc].u_obj);
 
+    if (args[ARG_reset].u_obj != MP_OBJ_NULL) {
+        self->reset = mp_hal_get_pin_obj(args[ARG_reset].u_obj);
+    }    
     if (args[ARG_cs].u_obj != MP_OBJ_NULL) {
         self->cs = mp_hal_get_pin_obj(args[ARG_cs].u_obj);
     }
