@@ -211,7 +211,8 @@ STATIC void show_chinese(st7735_ST7735_obj_t *self, uint16_t x, uint16_t y, uint
     uint8_t hi = fg_color >> 8, lo = fg_color;
     uint8_t hi2 = bg_color >> 8, lo2 = bg_color;
 	uint8_t i, j;
-	uint8_t *temp, size2;
+	const uint8_t *temp;
+    uint8_t size2;
 	if(size1==16){temp=Hzk16;}//选择字号
 	//if(size1==32){temp=Hzk32;}
     set_window(self, x, y, x + size1 - 1, y + size1 - 1); //设置一个汉字的区域
