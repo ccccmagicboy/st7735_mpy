@@ -195,7 +195,8 @@ STATIC mp_obj_t st7735_ST7735_soft_reset(mp_obj_t self_in) {
     mp_hal_delay_ms(10);
     return mp_const_none;
 }
-
+/////////////////////////////////////////basic functions above//////////////////////////////////////////////
+/////////////////////////////////////////export functions below//////////////////////////////////////////////
 // do not expose extra method to reduce size
 #ifdef EXPOSE_EXTRA_METHODS
 STATIC mp_obj_t st7735_ST7735_write(mp_obj_t self_in, mp_obj_t command, mp_obj_t data) {
