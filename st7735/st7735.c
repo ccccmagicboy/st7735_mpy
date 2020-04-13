@@ -31,6 +31,7 @@
 #include "py/mphal.h"
 #include "extmod/machine_spi.h"
 #include "st7735.h"
+#include <stddef.h>
 #include <math.h>
 
 #define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
