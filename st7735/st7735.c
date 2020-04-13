@@ -214,7 +214,7 @@ STATIC void show_chinese(st7735_ST7735_obj_t *self, uint16_t x, uint16_t y, uint
 	uint8_t *temp, size2;
 	if(size1==16){temp=Hzk16;}//选择字号
 	//if(size1==32){temp=Hzk32;}
-    set_window(x, y, x + size1 - 1, y + size1 - 1); //设置一个汉字的区域
+    set_window(self, x, y, x + size1 - 1, y + size1 - 1); //设置一个汉字的区域
     size2 = size1 * size1 / 8;                      //一个汉字所占的字节
 	temp += index * size2;//写入的起始位置
 	for(j=0;j<size2;j++)
@@ -290,7 +290,7 @@ STATIC mp_obj_t st7735_ST7735_show_chinese(size_t n_args, const mp_obj_t *args) 
     mp_int_t fg_color = _swap_bytes(mp_obj_get_int(args[5]));
     mp_int_t bg_color = _swap_bytes(mp_obj_get_int(args[6]));
     
-    show_chinese(self, x, y, index, size, fg_color, bg_color)
+    show_chinese(self, x, y, index, size, fg_color, bg_color);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_show_chinese_obj, 7, 7, st7735_ST7735_show_chinese);
