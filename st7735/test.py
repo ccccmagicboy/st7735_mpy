@@ -44,7 +44,19 @@ def random_text():
                 color2 = st7735.color565(random.getrandbits(8), random.getrandbits(8), random.getrandbits(8))
                 display.text(font, "Hello!", random.randint(0, col_max), random.randint(0, row_max), color1, color2)
             
+def random_circle(display, x0, y0, r, color):
+    global display
+    while True:
+        for rotation in range(4):
+            display.rotation(rotation)
+            display.fill(0)
+            col_max = display.width() - font.WIDTH*6
+            row_max = display.height() - font.HEIGHT
 
+            for _ in range(250):
+                color1 = st7735.color565(random.getrandbits(8), random.getrandbits(8), random.getrandbits(8))
+                display.circle(random.randint(0, col_max), random.randint(0, row_max), 5, color1)
+            
 def qq_pic():
     global display
     buf = bytearray(0)

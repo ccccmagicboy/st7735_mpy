@@ -240,6 +240,46 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_set_window_obj, 5, 5, s
 
 #endif
 
+STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
+    // extract arguments
+    st7735_ST7735_obj_t *self   = MP_OBJ_TO_PTR(args[0]);
+    mp_int_t x0                 = mp_obj_get_int(args[1]);
+    mp_int_t y0                 = mp_obj_get_int(args[2]);
+    mp_int_t r                  = mp_obj_get_int(args[3]);
+
+    mp_int_t color;
+
+    if (n_args > 4)
+        color = _swap_bytes(mp_obj_get_int(args[4]));
+    else
+        color = _swap_bytes(WHITE); //default color
+    
+    xend = int(0.7071 * r) + 1;
+    rsq = r * r;
+    
+    for(int x=0;x<xend;x++)
+    {
+        y = int(sqrt(rsq - x * x));
+        xp = x0 + x;
+        yp = y0 + y;
+        xn = x0 - x;
+        yn = y0 - y;
+        xyp = x0 + y;
+        yxp = y0 + x;
+        xyn = x0 - y;
+        yxn = y0 - x;       
+        draw_pixel(self, xp, yp, color);
+        draw_pixel(self, xp, yn, color);
+        draw_pixel(self, xn, yp, color);
+        draw_pixel(self, xn, yn, color);
+        draw_pixel(self, xyp, yxp, color);
+        draw_pixel(self, xyp, yxn, color);
+        draw_pixel(self, xyn, yxp, color);
+        draw_pixel(self, xyn, yxn, color);       
+    }
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_circle_obj, 5, 5, st7735_ST7735_circle);
+
 STATIC mp_obj_t st7735_ST7735_inversion_mode(mp_obj_t self_in, mp_obj_t value) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
     if(mp_obj_is_true(value)) {
@@ -753,6 +793,7 @@ STATIC const mp_rom_map_elem_t st7735_ST7735_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_blit_buffer), MP_ROM_PTR(&st7735_ST7735_blit_buffer_obj) },
     { MP_ROM_QSTR(MP_QSTR_fill_rect), MP_ROM_PTR(&st7735_ST7735_fill_rect_obj) },
     { MP_ROM_QSTR(MP_QSTR_fill), MP_ROM_PTR(&st7735_ST7735_fill_obj) },
+    { MP_ROM_QSTR(MP_QSTR_circle), MP_ROM_PTR(&st7735_ST7735_circle_obj) },     //new
     { MP_ROM_QSTR(MP_QSTR_hline), MP_ROM_PTR(&st7735_ST7735_hline_obj) },
     { MP_ROM_QSTR(MP_QSTR_vline), MP_ROM_PTR(&st7735_ST7735_vline_obj) },
     { MP_ROM_QSTR(MP_QSTR_rect), MP_ROM_PTR(&st7735_ST7735_rect_obj) },
