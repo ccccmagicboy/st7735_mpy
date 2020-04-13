@@ -266,12 +266,12 @@ STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
     else
         color = _swap_bytes(WHITE); //default color
     
-    xend = int(0.7071 * r) + 1;
+    xend = (int)(0.7071 * r) + 1;
     rsq = r * r;
     
     for(int x=0;x<xend;x++)
     {
-        y = int(sqrt(rsq - x * x));
+        y = (int)(sqrt(rsq - x * x));
         xp = x0 + x;
         yp = y0 + y;
         xn = x0 - x;
@@ -289,6 +289,7 @@ STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
         draw_pixel(self, xyn, yxp, color);
         draw_pixel(self, xyn, yxn, color);       
     }
+    return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_circle_obj, 5, 5, st7735_ST7735_circle);
 
