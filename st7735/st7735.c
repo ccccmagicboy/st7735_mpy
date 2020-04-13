@@ -213,11 +213,15 @@ STATIC void show_chinese(st7735_ST7735_obj_t *self, uint16_t x, uint16_t y, uint
 	uint8_t i, j;
 	const uint8_t *temp;
     uint8_t size2;
-	if(size1==16){temp=Hzk16;}//选择字号
+	if(size1==16){temp=Hzk16;}                              //选择字号
 	//if(size1==32){temp=Hzk32;}
-    set_window(self, x, y, x + size1 - 1, y + size1 - 1); //设置一个汉字的区域
-    size2 = size1 * size1 / 8;                      //一个汉字所占的字节
-	temp += index * size2;//写入的起始位置
+    set_window(self, x, y, x + size1 - 1, y + size1 - 1);   //设置一个汉字的区域
+    size2 = size1 * size1 / 8;                              //一个汉字所占的字节=32 bytes
+	temp += index * size2;                                  //写入的起始位置
+    
+    DC_HIGH();
+    CS_LOW();
+    
 	for(j=0;j<size2;j++)
 	{
 		for(i=0;i<8;i++)
@@ -234,7 +238,9 @@ STATIC void show_chinese(st7735_ST7735_obj_t *self, uint16_t x, uint16_t y, uint
 			}
 		}
 		temp++;
-	 }
+	}
+    
+    CS_HIGH();    
 }
 /////////////////////////////////////////basic functions above//////////////////////////////////////////////
 /////////////////////////////////////////export functions below//////////////////////////////////////////////
