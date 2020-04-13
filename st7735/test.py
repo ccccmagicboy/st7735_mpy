@@ -55,6 +55,12 @@ def random_circle():
                 color1 = st7735.color565(random.getrandbits(8), random.getrandbits(8), random.getrandbits(8))
                 display.circle(random.randint(0, col_max), random.randint(0, row_max), 10, color1)
             
+def chinese_font_test():
+    global display
+    display.show_chinese(0, 0, 0, 16, st7735.WHITE, st7735.BLACK)
+    display.show_chinese(17, 0, 1, 16, st7735.WHITE, st7735.BLACK)
+    display.show_chinese(33, 0, 2, 16, st7735.WHITE, st7735.BLACK)
+            
 def qq_pic():
     global display
     buf = bytearray(0)

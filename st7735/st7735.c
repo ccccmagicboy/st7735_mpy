@@ -196,6 +196,45 @@ STATIC mp_obj_t st7735_ST7735_soft_reset(mp_obj_t self_in) {
     mp_hal_delay_ms(10);
     return mp_const_none;
 }
+
+/******************************************************************************
+      函数说明：LCD显示汉字
+      入口数据：x,y   起始坐标
+                index 汉字的序号
+                size1  字号(16, )
+                前景色
+                背景色
+      返回值：  无
+******************************************************************************/
+STATIC void show_chinese(st7735_ST7735_obj_t *self, uint16_t x, uint16_t y, uint16_t index, uint16_t size1, uint16_t fg_color, uint16_t bg_color)	
+{
+    uint8_t hi = fg_color >> 8, lo = fg_color;
+    uint8_t hi2 = bg_color >> 8, lo2 = bg_color;
+	uint8_t i, j;
+	uint8_t *temp, size2;
+	if(size1==16){temp=Hzk16;}//选择字号
+	//if(size1==32){temp=Hzk32;}
+    set_window(x, y, x + size1 - 1, y + size1 - 1); //设置一个汉字的区域
+    size2 = size1 * size1 / 8;                      //一个汉字所占的字节
+	temp += index * size2;//写入的起始位置
+	for(j=0;j<size2;j++)
+	{
+		for(i=0;i<8;i++)
+		{
+		 	if((*temp&(1<<i))!=0)//从数据的低位开始读
+			{
+                write_spi(self->spi_obj, &hi, 1);
+                write_spi(self->spi_obj, &lo, 1);
+			}
+			else
+			{
+                write_spi(self->spi_obj, &hi2, 1);
+                write_spi(self->spi_obj, &lo2, 1);
+			}
+		}
+		temp++;
+	 }
+}
 /////////////////////////////////////////basic functions above//////////////////////////////////////////////
 /////////////////////////////////////////export functions below//////////////////////////////////////////////
 // do not expose extra method to reduce size
@@ -241,7 +280,21 @@ STATIC mp_obj_t st7735_ST7735_set_window(size_t n_args, const mp_obj_t *args) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_set_window_obj, 5, 5, st7735_ST7735_set_window);
 
 #endif
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+STATIC mp_obj_t st7735_ST7735_show_chinese(size_t n_args, const mp_obj_t *args) {
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
+    mp_int_t x = mp_obj_get_int(args[1]);
+    mp_int_t y = mp_obj_get_int(args[2]);
+    mp_int_t index = mp_obj_get_int(args[3]);
+    mp_int_t size = mp_obj_get_int(args[4]);
+    mp_int_t fg_color = _swap_bytes(mp_obj_get_int(args[5]));
+    mp_int_t bg_color = _swap_bytes(mp_obj_get_int(args[6]));
+    
+    show_chinese(self, x, y, index, size, fg_color, bg_color)
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_show_chinese_obj, 7, 7, st7735_ST7735_show_chinese);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
     // extract arguments
     st7735_ST7735_obj_t *self   = MP_OBJ_TO_PTR(args[0]);
@@ -807,7 +860,8 @@ STATIC const mp_rom_map_elem_t st7735_ST7735_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_blit_buffer), MP_ROM_PTR(&st7735_ST7735_blit_buffer_obj) },
     { MP_ROM_QSTR(MP_QSTR_fill_rect), MP_ROM_PTR(&st7735_ST7735_fill_rect_obj) },
     { MP_ROM_QSTR(MP_QSTR_fill), MP_ROM_PTR(&st7735_ST7735_fill_obj) },
-    { MP_ROM_QSTR(MP_QSTR_circle), MP_ROM_PTR(&st7735_ST7735_circle_obj) },     //new
+    { MP_ROM_QSTR(MP_QSTR_circle), MP_ROM_PTR(&st7735_ST7735_circle_obj) },                 //new
+    { MP_ROM_QSTR(MP_QSTR_show_chinese), MP_ROM_PTR(&st7735_ST7735_show_chinese_obj) },     //new
     { MP_ROM_QSTR(MP_QSTR_hline), MP_ROM_PTR(&st7735_ST7735_hline_obj) },
     { MP_ROM_QSTR(MP_QSTR_vline), MP_ROM_PTR(&st7735_ST7735_vline_obj) },
     { MP_ROM_QSTR(MP_QSTR_rect), MP_ROM_PTR(&st7735_ST7735_rect_obj) },
