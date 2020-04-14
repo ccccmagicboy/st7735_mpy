@@ -311,44 +311,40 @@ STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
 
     mp_int_t color;
     
-    int xend, rsq;
-    int y;
-    int xp; 
-    int yp;
-    int xn; 
-    int yn;
-    int xyp;
-    int yxp;
-    int xyn;
-    int yxn;
+	int f = 1 - r;
+	int ddF_x = 1;
+	int ddF_y = -2 * r;
+	int x1 = 0;
+	int y1 = r;
 
     if (n_args > 4)
         color = _swap_bytes(mp_obj_get_int(args[4]));
     else
         color = _swap_bytes(WHITE); //default color
     
-    xend = (int)(0.7071 * r) + 1;
-    rsq = r * r;
+	draw_pixel(self, x0, y0 + r, color);
+	draw_pixel(self, x0, y0 - r, color);
+	draw_pixel(self, x0 + r, y0, color);
+	draw_pixel(self, x0 - r, y0, color);
     
-    for(int x=0;x<xend;x++)
-    {
-        y = (int)(sqrt(rsq - x * x));
-        xp = x0 + x;
-        yp = y0 + y;
-        xn = x0 - x;
-        yn = y0 - y;
-        xyp = x0 + y;
-        yxp = y0 + x;
-        xyn = x0 - y;
-        yxn = y0 - x;       
-        draw_pixel(self, xp, yp, color);
-        draw_pixel(self, xp, yn, color);
-        draw_pixel(self, xn, yp, color);
-        draw_pixel(self, xn, yn, color);
-        draw_pixel(self, xyp, yxp, color);
-        draw_pixel(self, xyp, yxn, color);
-        draw_pixel(self, xyn, yxp, color);
-        draw_pixel(self, xyn, yxn, color);       
+    while(x1 < y1)
+    {   
+		if (f >= 0) {
+			y1--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x1++;
+		ddF_x += 2;
+		f += ddF_x;
+		draw_pixel(self, x0 + x1, y0 + y1, color);
+		draw_pixel(self, x0 - x1, y0 + y1, color);
+		draw_pixel(self, x0 + x1, y0 - y1, color);
+		draw_pixel(self, x0 - x1, y0 - y1, color);
+		draw_pixel(self, x0 + y1, y0 + x1, color);
+		draw_pixel(self, x0 - y1, y0 + x1, color);
+		draw_pixel(self, x0 + y1, y0 - x1, color);
+		draw_pixel(self, x0 - y1, y0 - x1, color);   
     }
     return mp_const_none;
 }
