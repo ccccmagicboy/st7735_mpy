@@ -398,6 +398,7 @@ STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
     mp_int_t r                  = mp_obj_get_int(args[3]);
 
     mp_int_t color;
+    mp_int_t fill_color;
     
     if (n_args > 4)
         color = _swap_bytes(mp_obj_get_int(args[4]));
