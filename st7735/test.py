@@ -53,7 +53,8 @@ def random_circle():
 
             for _ in range(250):
                 color1 = st7735.color565(random.getrandbits(8), random.getrandbits(8), random.getrandbits(8))
-                display.circle(random.randint(0, col_max), random.randint(0, row_max), 10, color1)
+				color2 = st7735.color565(random.getrandbits(8), random.getrandbits(8), random.getrandbits(8))
+                display.circle(random.randint(0, col_max), random.randint(0, row_max), 15, color1, color2)
             
 def chinese_font_test():
     global display

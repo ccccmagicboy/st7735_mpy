@@ -196,7 +196,95 @@ STATIC mp_obj_t st7735_ST7735_soft_reset(mp_obj_t self_in) {
     mp_hal_delay_ms(10);
     return mp_const_none;
 }
+/******************************************************************************
+      函数说明：Used to do circles and roundrects
+      入口数据：x0, y0   起始坐标
+                r 半径
+                cornername
+                delta
+                color 填充色
+      返回值：  无
+******************************************************************************/
+static void fillCircleHelper(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, uint16_t r, uint8_t cornername, int16_t delta, uint16_t color)
+{
+	int16_t f = 1 - r;
+	int16_t ddF_x = 1;
+	int16_t ddF_y = -2 * r;
+	int16_t x = 0;
+	int16_t y = r;
+	int16_t ylm = x0 - r;
 
+	while (x < y) {
+		if (f >= 0) {
+			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * x + 1 + delta, fill_color);
+			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * x + 1 + delta, fill_color);
+			ylm = x0 - y;
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x++;
+		ddF_x += 2;
+		f += ddF_x;
+
+		if ((x0 - x) > ylm) {
+			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * y + 1 + delta, fill_color);
+			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * y + 1 + delta, fill_color);
+		}
+	}
+}
+/******************************************************************************
+      函数说明：画一个带填充的圆
+      入口数据：x, y   起始坐标
+                r 半径
+                fill_color 填充色
+      返回值：  无
+******************************************************************************/
+STATIC void draw_fill_circle(st7735_ST7735_obj_t *self, int16_t x, int16_t y, uint16_t r, uint16_t fill_color)
+{
+	fast_vline(self, x, y - r, 2 * r + 1, fill_color);
+	fillCircleHelper(self, x, y, r, 3, 0, fill_color);
+}
+/******************************************************************************
+      函数说明：画一个圆
+      入口数据：x0, y0   起始坐标
+                r 半径
+                color外框色
+      返回值：  无
+******************************************************************************/
+STATIC void draw_circle(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, uint16_t r, uint16_t color)
+{
+	int f = 1 - r;
+	int ddF_x = 1;
+	int ddF_y = -2 * r;
+	int x1 = 0;
+	int y1 = r;
+
+	draw_pixel(self, x0, y0 + r, color);
+	draw_pixel(self, x0, y0 - r, color);
+	draw_pixel(self, x0 + r, y0, color);
+	draw_pixel(self, x0 - r, y0, color);
+    
+    while(x1 < y1)
+    {   
+		if (f >= 0) {
+			y1--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x1++;
+		ddF_x += 2;
+		f += ddF_x;
+		draw_pixel(self, x0 + x1, y0 + y1, color);
+		draw_pixel(self, x0 - x1, y0 + y1, color);
+		draw_pixel(self, x0 + x1, y0 - y1, color);
+		draw_pixel(self, x0 - x1, y0 - y1, color);
+		draw_pixel(self, x0 + y1, y0 + x1, color);
+		draw_pixel(self, x0 - y1, y0 + x1, color);
+		draw_pixel(self, x0 + y1, y0 - x1, color);
+		draw_pixel(self, x0 - y1, y0 - x1, color);   
+    }
+}
 /******************************************************************************
       函数说明：LCD显示汉字
       入口数据：x,y   起始坐标
@@ -311,44 +399,25 @@ STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
 
     mp_int_t color;
     
-	int f = 1 - r;
-	int ddF_x = 1;
-	int ddF_y = -2 * r;
-	int x1 = 0;
-	int y1 = r;
-
     if (n_args > 4)
         color = _swap_bytes(mp_obj_get_int(args[4]));
     else
         color = _swap_bytes(WHITE); //default color
-    
-	draw_pixel(self, x0, y0 + r, color);
-	draw_pixel(self, x0, y0 - r, color);
-	draw_pixel(self, x0 + r, y0, color);
-	draw_pixel(self, x0 - r, y0, color);
-    
-    while(x1 < y1)
-    {   
-		if (f >= 0) {
-			y1--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x1++;
-		ddF_x += 2;
-		f += ddF_x;
-		draw_pixel(self, x0 + x1, y0 + y1, color);
-		draw_pixel(self, x0 - x1, y0 + y1, color);
-		draw_pixel(self, x0 + x1, y0 - y1, color);
-		draw_pixel(self, x0 - x1, y0 - y1, color);
-		draw_pixel(self, x0 + y1, y0 + x1, color);
-		draw_pixel(self, x0 - y1, y0 + x1, color);
-		draw_pixel(self, x0 + y1, y0 - x1, color);
-		draw_pixel(self, x0 - y1, y0 - x1, color);   
+        
+    if (n_args > 5)
+        fill_color = _swap_bytes(mp_obj_get_int(args[5]));
+    else
+        fill_color = _swap_bytes(WHITE); //default color    
+
+    if (fill_color >= 0) {
+        draw_fill_circle(self, x0, y0, r, fill_color);
+        if (color != fill_color) draw_circle(self, x0, y0, r, color);
     }
+    else draw_circle(self, x0, y0, r, color);
+    
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_circle_obj, 5, 5, st7735_ST7735_circle);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_circle_obj, 4, 6, st7735_ST7735_circle);
 
 STATIC mp_obj_t st7735_ST7735_inversion_mode(mp_obj_t self_in, mp_obj_t value) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(self_in);
