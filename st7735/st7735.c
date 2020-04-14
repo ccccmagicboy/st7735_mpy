@@ -216,8 +216,8 @@ static void fillCircleHelper(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, 
 
 	while (x < y) {
 		if (f >= 0) {
-			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * x + 1 + delta, fill_color);
-			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * x + 1 + delta, fill_color);
+			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * x + 1 + delta, color);
+			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * x + 1 + delta, color);
 			ylm = x0 - y;
 			y--;
 			ddF_y += 2;
@@ -228,8 +228,8 @@ static void fillCircleHelper(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, 
 		f += ddF_x;
 
 		if ((x0 - x) > ylm) {
-			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * y + 1 + delta, fill_color);
-			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * y + 1 + delta, fill_color);
+			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * y + 1 + delta, color);
+			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * y + 1 + delta, color);
 		}
 	}
 }
