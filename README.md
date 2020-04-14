@@ -1,33 +1,23 @@
-ST7789 Driver for MicroPython
+ST7735 Driver for MicroPython ESP32 port(pure-C)
 =============================
+C driver is faster than the micropython driver.
 
-This is a fork of devbis' st7789_mpy module from
-https://github.com/devbis/st7789_mpy.
-
-I modified the original driver for one of my projects by adding support for
-display rotation, scrolling and drawing text using 8 and 16 bit wide bitmap
-fonts. Included are 12 bitmap fonts derived from classic pc text mode fonts
-and a couple of example programs that run on the TTGO T-Display.
-
-This is a work in progress.
-
--- Russ
+This is a fork of both 
+https://github.com/devbis/st7789_mpy and 
+https://github.com/russhughes/st7789_mpy
+, and is a work in progress.
 
 Overview
 --------
-This is a driver for MicroPython to handle cheap displays
-based on ST7789 chip.
+This is a driver for MicroPython to handle displays
+based on ST7735 chip.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/devbis/st7789_mpy/master/docs/ST7789.jpg" alt="ST7789 display photo"/>
-</p>
+It support 80x160 0.96inch variants of displays.
 
-It supports both 240x240 and 135x240 variants of displays.
+It is written in pure C, so build the firmware to have a test.
+Only ESP32 are supported for now(ESP8266 maybe work too, but not test).
 
-It is written in pure C, so you have to build
-firmware by yourself.
-Only ESP8266 and ESP32 are supported for now.
-
+<!---
 
 Building instruction
 ---------------------
@@ -257,3 +247,4 @@ in the `.irom0.text : ALIGN(4)` section
 
 This driver supports only 240x240 and 135x240 pixel displays.
 
+-->
