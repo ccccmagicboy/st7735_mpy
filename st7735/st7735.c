@@ -196,54 +196,23 @@ STATIC mp_obj_t st7735_ST7735_soft_reset(mp_obj_t self_in) {
     mp_hal_delay_ms(10);
     return mp_const_none;
 }
-/******************************************************************************
-      函数说明：Used to do circles and roundrects
-      入口数据：x0, y0   起始坐标
-                r 半径
-                cornername
-                delta
-                color 填充色
-      返回值：  无
-******************************************************************************/
-static void fillCircleHelper(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, uint16_t r, uint8_t cornername, int16_t delta, uint16_t color)
-{
-	int16_t f = 1 - r;
-	int16_t ddF_x = 1;
-	int16_t ddF_y = -2 * r;
-	int16_t x = 0;
-	int16_t y = r;
-	int16_t ylm = x0 - r;
 
-	while (x < y) {
-		if (f >= 0) {
-			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * x + 1 + delta, color);
-			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * x + 1 + delta, color);
-			ylm = x0 - y;
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x++;
-		ddF_x += 2;
-		f += ddF_x;
-
-		if ((x0 - x) > ylm) {
-			if (cornername & 0x1) fast_vline(self, x0 + y, y0 - x, 2 * y + 1 + delta, color);
-			if (cornername & 0x2) fast_vline(self, x0 - y, y0 - x, 2 * y + 1 + delta, color);
-		}
-	}
-}
 /******************************************************************************
       函数说明：画一个带填充的圆
-      入口数据：x, y   起始坐标
+      入口数据：x0, y0   起始坐标
                 r 半径
                 fill_color 填充色
       返回值：  无
 ******************************************************************************/
-STATIC void draw_fill_circle(st7735_ST7735_obj_t *self, int16_t x, int16_t y, uint16_t r, uint16_t fill_color)
+STATIC void draw_fill_circle(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, uint16_t r, uint16_t fill_color)
 {
-	fast_vline(self, x, y - r, 2 * r + 1, fill_color);
-	fillCircleHelper(self, x, y, r, 3, 0, fill_color);
+    for (int x = -r; x < r ; x++)
+    {
+        int height = (int)sqrt(r * r - x * x);
+
+        for (int y = -height; y < height; y++)
+            draw_pixel(self, x + x0, y + y0, fill_color);
+    }
 }
 /******************************************************************************
       函数说明：画一个圆
