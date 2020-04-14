@@ -68,10 +68,22 @@ def circle_test():
             
 def chinese_font_test():
     global display
-    display.show_chinese(0, 0, 0, 16, st7735.WHITE, st7735.BLACK)
-    display.show_chinese(17, 0, 1, 16, st7735.WHITE, st7735.BLACK)
-    display.show_chinese(33, 0, 2, 16, st7735.WHITE, st7735.BLACK)
-            
+    
+    for x in range(10):
+        display.show_chinese(x*16, 0, 0, 16, st7735.WHITE, st7735.BLACK)
+        
+    for x in range(10):
+        display.show_chinese(x*16, 16, 1, 16, st7735.WHITE, st7735.BLACK)
+
+    for x in range(10):
+        display.show_chinese(x*16, 32, 2, 16, st7735.WHITE, st7735.BLACK)
+
+    for x in range(10):
+        display.show_chinese(x*16, 48, 3, 16, st7735.WHITE, st7735.BLACK)
+
+    for x in range(10):
+        display.show_chinese(x*16, 64, 4, 16, st7735.WHITE, st7735.BLACK)        
+                   
 def qq_pic():
     global display
     buf = bytearray(0)
