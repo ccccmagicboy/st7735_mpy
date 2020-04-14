@@ -351,8 +351,8 @@ STATIC mp_obj_t st7735_ST7735_show_chinese(size_t n_args, const mp_obj_t *args) 
     mp_int_t y = mp_obj_get_int(args[2]);
     mp_int_t index = mp_obj_get_int(args[3]);
     mp_int_t size = mp_obj_get_int(args[4]);
-    mp_int_t fg_color = _swap_bytes(mp_obj_get_int(args[5]));
-    mp_int_t bg_color = _swap_bytes(mp_obj_get_int(args[6]));
+    mp_int_t fg_color = mp_obj_get_int(args[5]);
+    mp_int_t bg_color = mp_obj_get_int(args[6]);
     
     show_chinese(self, x, y, index, size, fg_color, bg_color);
     return mp_const_none;
@@ -370,14 +370,14 @@ STATIC mp_obj_t st7735_ST7735_circle(size_t n_args, const mp_obj_t *args) {
     mp_int_t fill_color;
     
     if (n_args > 4)
-        color = _swap_bytes(mp_obj_get_int(args[4]));
+        color = mp_obj_get_int(args[4]);
     else
-        color = _swap_bytes(WHITE); //default color
+        color = WHITE; //default color
         
     if (n_args > 5)
-        fill_color = _swap_bytes(mp_obj_get_int(args[5]));
+        fill_color = mp_obj_get_int(args[5]);
     else
-        fill_color = _swap_bytes(WHITE); //default color    
+        fill_color = WHITE; //default color    
 
     if (fill_color >= 0) {
         draw_fill_circle(self, x0, y0, r, fill_color);
