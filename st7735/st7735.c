@@ -208,9 +208,9 @@ STATIC void draw_fill_circle(st7735_ST7735_obj_t *self, int16_t x0, int16_t y0, 
 {
     for (int x = -r; x < r ; x++)
     {
-        int height = (int)sqrt(r * r - x * x);
+        int height = (int)sqrt(r * r - x * x) + 1;
 
-        for (int y = -height; y < height; y++)
+        for (int y = -height; y <= height; y++)
             draw_pixel(self, x + x0, y + y0, fill_color);
     }
 }
@@ -609,7 +609,8 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_text_obj, 5, 7, st7735_
 
 
 STATIC void set_rotation(st7735_ST7735_obj_t *self) {
-    uint8_t madctl_value = ST7735_MADCTL_BGR;
+    #uint8_t madctl_value = ST7735_MADCTL_BGR;
+    uint8_t madctl_value = ST7735_MADCTL_RGB;
 
     if (self->rotation == 0) {              // Portrait
         self->width = self->display_width;
