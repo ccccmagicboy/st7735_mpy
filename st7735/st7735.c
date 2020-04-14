@@ -609,7 +609,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_text_obj, 5, 7, st7735_
 
 
 STATIC void set_rotation(st7735_ST7735_obj_t *self) {
-    #uint8_t madctl_value = ST7735_MADCTL_BGR;
+    //uint8_t madctl_value = ST7735_MADCTL_BGR;
     uint8_t madctl_value = ST7735_MADCTL_RGB;
 
     if (self->rotation == 0) {              // Portrait
