@@ -70,7 +70,7 @@ typedef struct _st7735_ST7735_obj_t {
     mp_hal_pin_obj_t backlight;
 } st7735_ST7735_obj_t;
 
-
+STATIC uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
 // just a definition
 mp_obj_t st7735_ST7735_make_new( const mp_obj_type_t *type,
                                   size_t n_args,
