@@ -641,7 +641,6 @@ STATIC void set_rotation(st7735_ST7735_obj_t *self) {
     }
     const uint8_t madctl[] = { madctl_value };
     write_cmd(self, ST7735_MADCTL, madctl, 1);
-    set_window(self, 0, 0, self->width - 1, self->height - 1);
 }
 
 
