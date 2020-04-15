@@ -29,9 +29,9 @@ def wifi_init():
 def ftp_init():
     import uftpd
 
-def init():
+def init_display():
     global display
-    spi = machine.SPI(1, baudrate=30000000, polarity=0, phase=0, sck=Pin(32), mosi=Pin(5))
+    spi = machine.SPI(1, baudrate=30000000, polarity=0, phase=0, sck=Pin(32), mosi=Pin(5))# 26.6MHz
     display = st7735.ST7735(spi, 80, 160, dc=machine.Pin(4, machine.Pin.OUT), rotation=3)
     display.init()
 
