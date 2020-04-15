@@ -1,0 +1,31 @@
+# depslib dependency file v1.0
+1452050250 source:d:\progettimingw\bmp2raw\lib\encode.c
+	<stdlib.h>
+	<string.h>
+	"internal.h"
+
+1452050250 d:\progettimingw\bmp2raw\lib\internal.h
+	"../include/lzg.h"
+
+1452050250 d:\progettimingw\bmp2raw\include\lzg.h
+
+1478799149 source:d:\progettimingw\bmp2raw\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"include/lzg.h"
+	<stdint-gcc.h>
+
+1452050250 source:d:\progettimingw\bmp2raw\lib\checksum.c
+	"internal.h"
+
+1502024909 source:d:\progettimingw\bmp2rawvideo\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint-gcc.h>
+	<limits.h>
+	"b2r_util.h"
+
+1501072206 d:\progettimingw\bmp2rawvideo\b2r_util.h
+
