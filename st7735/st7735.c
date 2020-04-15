@@ -98,7 +98,17 @@ STATIC void write_cmd(st7735_ST7735_obj_t *self, uint8_t cmd, const uint8_t *dat
     }
     CS_HIGH()
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////
+STATIC void push_rgb_color(st7735_ST7735_obj_t *self, uint8_t r, uint8_t g, uint8_t b) {
+    uint16_t color = color565(r, g, b);
+    uint8_t hi = color >> 8, lo = color;
+    DC_HIGH();
+    CS_LOW();
+    write_spi(self->spi_obj, &hi, 1);
+    write_spi(self->spi_obj, &lo, 1);
+    CS_HIGH();
+}
+///////////////////////////////////////////////////////////////////////////////////////////////
 STATIC void set_window(st7735_ST7735_obj_t *self, uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
     if (x0 > x1 || x1 >= self->width) {
         return;
@@ -433,8 +443,19 @@ STATIC mp_obj_t st7735_ST7735_fill(mp_obj_t self_in, mp_obj_t _color) {
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(st7735_ST7735_fill_obj, st7735_ST7735_fill);
+///////////////////////////////////////////////////////////////////////////////////////
+STATIC mp_obj_t st7735_ST7735_push_rgb_color(size_t n_args, const mp_obj_t *args) {
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
+    mp_int_t r = mp_obj_get_int(args[1]);
+    mp_int_t g = mp_obj_get_int(args[2]);
+    mp_int_t b = mp_obj_get_int(args[3]);
 
+    push_rgb_color(self, r, g, b);
 
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_push_rgb_color_obj, 4, 4, st7735_ST7735_push_rgb_color);
+///////////////////////////////////////////////////////////////////////////////////////
 STATIC mp_obj_t st7735_ST7735_pixel(size_t n_args, const mp_obj_t *args) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
     mp_int_t x = mp_obj_get_int(args[1]);
@@ -925,6 +946,7 @@ STATIC const mp_rom_map_elem_t st7735_ST7735_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_fill), MP_ROM_PTR(&st7735_ST7735_fill_obj) },
     { MP_ROM_QSTR(MP_QSTR_circle), MP_ROM_PTR(&st7735_ST7735_circle_obj) },                 //new
     { MP_ROM_QSTR(MP_QSTR_show_chinese), MP_ROM_PTR(&st7735_ST7735_show_chinese_obj) },     //new
+    { MP_ROM_QSTR(MP_QSTR_push_rgb_color), MP_ROM_PTR(&st7735_ST7735_push_rgb_color_obj) }, //new
     { MP_ROM_QSTR(MP_QSTR_hline), MP_ROM_PTR(&st7735_ST7735_hline_obj) },
     { MP_ROM_QSTR(MP_QSTR_vline), MP_ROM_PTR(&st7735_ST7735_vline_obj) },
     { MP_ROM_QSTR(MP_QSTR_rect), MP_ROM_PTR(&st7735_ST7735_rect_obj) },
