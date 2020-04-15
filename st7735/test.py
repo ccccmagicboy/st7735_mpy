@@ -122,14 +122,24 @@ def qq_pic():
     #print(buf, len(buf))
     display.blit_buffer(buf, 0, 0, 40, 40)
     
+def test_scroll():
+    global display
+    x = 0
+    for x in range(163):
+        display.vscsad(x)
+        time.sleep_ms(10)
+    
 def test_pic():
     start = time.ticks_us()
     global display
     buf = bytearray(160*80*2)
+    during0 = time.ticks_diff(time.ticks_us(), start)
+    print('init var: {0:0.3f} ms'.format(during0/1000))        
     with open('/sd/BEEB_TEST.bin', 'rb') as ff:
         buf = ff.read()
+    during1 = time.ticks_diff(time.ticks_us(), start)
+    print('read from sdnand: {0:0.3f} ms'.format((during1 - during0)/1000))        
     display.blit_buffer(buf, 0, 0, 160, 80)
-    during = time.ticks_diff(time.ticks_us(), start)
-    
-    print('{0:0.3f} ms'.format(during/1000))
+    during2 = time.ticks_diff(time.ticks_us(), start)
+    print('send to lcd: {0:0.3f} ms'.format((during2 - during1)/1000))
     
