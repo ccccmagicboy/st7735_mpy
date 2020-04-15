@@ -12,7 +12,7 @@ import sys
 def init():
     global display
     spi = machine.SPI(1, baudrate=30000000, polarity=0, phase=0, sck=Pin(32), mosi=Pin(5))
-    display = st7735.ST7735(spi, 80, 160, dc=machine.Pin(4, machine.Pin.OUT))
+    display = st7735.ST7735(spi, 80, 160, dc=machine.Pin(4, machine.Pin.OUT), rotation=3)
     display.init()
 
 def random_color_fill():

@@ -708,18 +708,50 @@ STATIC mp_obj_t st7735_ST7735_set_ystart(mp_obj_t self_in, mp_obj_t start) {
 MP_DEFINE_CONST_FUN_OBJ_2(st7735_ST7735_set_ystart_obj, st7735_ST7735_set_ystart);
 ////////////////////////////////////////////////////////////////////////////////////
 STATIC mp_obj_t st7735_ST7735_vscrdef(size_t n_args, const mp_obj_t *args) {
-    // st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[0]);
-    // mp_int_t tfa = mp_obj_get_int(args[1]);
-    // mp_int_t vsa = mp_obj_get_int(args[2]);
-    // mp_int_t bfa = mp_obj_get_int(args[3]);
-
-    // uint8_t buf[6] = {(tfa) >> 8, (tfa) & 0xFF, (vsa) >> 8, (vsa) & 0xFF, (bfa) >> 8, (bfa) & 0xFF};
-    // write_cmd(self, ST7735_VSCRDEF, buf, 6);
-
+    enum {
+        ARG_self, ARG_tfa, ARG_bfa
+    };
+    //datasheet p137
+    st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[ARG_self]);
+    mp_int_t tfa = mp_obj_get_int(args[ARG_tfa]);//top fix area
+    mp_int_t bfa = mp_obj_get_int(args[ARG_bfa]);//bottom fix area
+    
+    if (args[ARG_tfa].u_obj == MP_OBJ_NULL) {
+        mp_raise_ValueError("must specify top fix area");
+    }
+    else
+    {
+        if (tfa >= 162)
+        {
+            mp_raise_ValueError("top fix area must be less than 162.");
+        }
+    }
+    
+    if (args[ARG_bfa].u_obj == MP_OBJ_NULL) {
+        mp_raise_ValueError("must specify bottom fix area");
+    }    
+    else
+    {
+        if (tfa >= 162)
+        {
+            mp_raise_ValueError("bottom fix area must be less than 162.");
+        }
+    }
+    
+    vsa = 162 - tfa - bfa
+    
+    if (vsa <= 0)
+    {
+        mp_raise_ValueError("visible area must be more than 0.");
+    }    
+    
+    uint8_t buf[6] = {0, (tfa) & 0xFF, 0, (vsa) & 0xFF, 0, (bfa) & 0xFF};
+    write_cmd(self, ST7735_VSCRDEF, buf, 6);
+    
     return mp_const_none;
 }
 
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_vscrdef_obj, 4, 4, st7735_ST7735_vscrdef);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7735_ST7735_vscrdef_obj, 3, 3, st7735_ST7735_vscrdef);
 
 
 STATIC mp_obj_t st7735_ST7735_vscsad(mp_obj_t self_in, mp_obj_t vssa_in) {

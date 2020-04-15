@@ -43,6 +43,7 @@ extern "C" {
 
 #define ST7735_PTLAR   0x30
 #define ST7735_SCRLAR  0x33     //NEW
+#define ST7735_VSCRDEF ST7735_SCRLAR
 #define ST7735_TEOFF   0x34     //NEW
 #define ST7735_TEON    0x35     //NEW
 #define ST7735_MADCTL  0x36
