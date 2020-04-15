@@ -8,6 +8,26 @@ from struct import unpack
 from struct import pack
 import binascii
 import sys
+import uos
+import network
+
+def sd_init():
+    global sd
+    sd = machine.SDCard(slot=1, width=1, freq=40000000)
+    uos.mount(sd, '/sd')
+    print(uos.listdir('/sd'))
+    
+def wifi_init():
+    sta_if = network.WLAN(network.STA_IF)
+    sta_if.active(True)
+    sta_if.connect('TP-LINK_AB2B02', '58930933')
+    while True:
+        if sta_if.isconnected():
+            print(sta_if.ifconfig())
+            break
+    
+def ftp_init():
+    import uftpd
 
 def init():
     global display
@@ -87,7 +107,7 @@ def chinese_font_test():
 def qq_pic():
     global display
     buf = bytearray(0)
-    with open('test.bin', 'rb') as ff:
+    with open('/sd/test.bin', 'rb') as ff:
         try:
             while True:
                 rr = unpack('BB', ff.read(2))
@@ -100,4 +120,16 @@ def qq_pic():
             pass
 
     #print(buf, len(buf))
-    display.blit_buffer(buf, 100, 50, 40, 40)
+    display.blit_buffer(buf, 0, 0, 40, 40)
+    
+def test_pic():
+    start = time.ticks_us()
+    global display
+    buf = bytearray(160*80*2)
+    with open('/sd/BEEB_TEST.bin', 'rb') as ff:
+        buf = ff.read()
+    display.blit_buffer(buf, 0, 0, 160, 80)
+    during = time.ticks_diff(time.ticks_us(), start)
+    
+    print('{0:0.3f} ms'.format(during/1000))
+    
