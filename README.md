@@ -17,6 +17,11 @@ It support 80x160 0.96inch variants of displays.
 It is written in pure C, so build the firmware to have a test.
 Only ESP32 are supported for now(ESP8266 maybe work too, but not test).
 
+
+BMP images are supported.
+
+Only uncompressed RGB 24-bit with no color space information BMP images can be displayed.
+
 <!---
 
 Building instruction
