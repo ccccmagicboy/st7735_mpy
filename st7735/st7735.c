@@ -715,30 +715,19 @@ STATIC mp_obj_t st7735_ST7735_vscrdef(size_t n_args, const mp_obj_t *args) {
     st7735_ST7735_obj_t *self = MP_OBJ_TO_PTR(args[ARG_self]);
     mp_int_t tfa = mp_obj_get_int(args[ARG_tfa]);//top fix area
     mp_int_t bfa = mp_obj_get_int(args[ARG_bfa]);//bottom fix area
+    mp_int_t vsa = 0;
     
-    if (args[ARG_tfa].u_obj == MP_OBJ_NULL) {
-        mp_raise_ValueError("must specify top fix area");
-    }
-    else
+    if (tfa >= 162)
     {
-        if (tfa >= 162)
-        {
-            mp_raise_ValueError("top fix area must be less than 162.");
-        }
+        mp_raise_ValueError("top fix area must be less than 162.");
     }
     
-    if (args[ARG_bfa].u_obj == MP_OBJ_NULL) {
-        mp_raise_ValueError("must specify bottom fix area");
-    }    
-    else
+    if (tfa >= 162)
     {
-        if (tfa >= 162)
-        {
-            mp_raise_ValueError("bottom fix area must be less than 162.");
-        }
+        mp_raise_ValueError("bottom fix area must be less than 162.");
     }
-    
-    vsa = 162 - tfa - bfa
+
+    vsa = 162 - tfa - bfa;
     
     if (vsa <= 0)
     {
