@@ -68,13 +68,13 @@ class st7735_pic_fb(framebuf.FrameBuffer):
 
     def init_display(self):
         self.fill(0)
-        self.show()
+        self.show(0, 0)
         
     def load(self, buf):
         self.buffer[:] = buf #copy the buf
 
-    def show(self):
-        display.blit_buffer(self.buffer, 0, 0, self.width, self.height)
+    def show(self, x, y):
+        display.blit_buffer(self.buffer, x, y, self.width, self.height)
         
     def chinese(self, ch_str, x_axis, y_axis):
         offset_ = 0
@@ -267,7 +267,7 @@ def load_bmp_file(file, x, y):
             if int.from_bytes(f.read(2), 'little') == 1: #planes must be 1
                 depth = int.from_bytes(f.read(2), 'little')
                 if depth == 24 and int.from_bytes(f.read(4), 'little') == 0:#compress method == uncompressed
-                    print("Image size:", width, "x", height)
+                    print("Image size: w{} x h{}".format(width, height))
                     rowsize = (width * 3 + 3) & ~3
                     if height < 0:
                         height = -height
@@ -292,3 +292,91 @@ def load_bmp_file(file, x, y):
 def test_load_bmp_file():
     load_bmp_file('/sd/qq_logo_24bit.bmp', 0, 0)
     
+def test_framebuf_pic0():
+    global display  
+    
+    with open('/sd/test0.bmp', 'rb') as f:
+        if f.read(2) == b'BM':  #header
+            dummy = f.read(8) #file size(4), creator bytes(4)
+            offset = int.from_bytes(f.read(4), 'little')
+            hdrsize = int.from_bytes(f.read(4), 'little')
+            width = int.from_bytes(f.read(4), 'little')
+            height = int.from_bytes(f.read(4), 'little')
+            buf = bytearray(width*height*2) #init buf
+            page0 = st7735_pic_fb(display, width, height)
+            page0.init_display()  
+            if int.from_bytes(f.read(2), 'little') == 1: #planes must be 1
+                depth = int.from_bytes(f.read(2), 'little')
+                if depth == 24 and int.from_bytes(f.read(4), 'little') == 0:#compress method == uncompressed
+                    print("Image size: w{} x h{}".format(width, height))
+                    rowsize = (width * 3 + 3) & ~3
+                    print('rowsize is {}'.format(rowsize))
+                    if height < 0:
+                        height = -height
+                        flip = False
+                    else:
+                        flip = True
+                    w, h = width, height
+                    
+                    for row in reversed(range(h)):
+                        if flip:
+                            pos = offset + (height - 1 - row) * rowsize
+                        else:
+                            pos = offset + row * rowsize
+                        if f.tell() != pos:
+                            dummy = f.seek(pos)
+                        for col in range(w):
+                            bgr = f.read(3)
+                            rgb_color = st7735.color565(bgr[2], bgr[1], bgr[0])
+                            buf[row*w*2 + col*2] = rgb_color >> 8
+                            buf[row*w*2 + col*2 + 1] = rgb_color
+                else:
+                    print('not 24bit bmp.')
+            page0.load(buf)
+            # page0.show(0, 0)
+            # while 1:
+                # page0.show(random.randint(0, 160), random.randint(0, 80))            
+
+    with open('/sd/qq_logo_24bit.bmp', 'rb') as f:
+        if f.read(2) == b'BM':  #header
+            dummy = f.read(8) #file size(4), creator bytes(4)
+            offset = int.from_bytes(f.read(4), 'little')
+            hdrsize = int.from_bytes(f.read(4), 'little')
+            width = int.from_bytes(f.read(4), 'little')
+            height = int.from_bytes(f.read(4), 'little')
+            buf = bytearray(width*height*2) #init buf
+            page1 = st7735_pic_fb(display, width, height)
+            page1.init_display()  
+            if int.from_bytes(f.read(2), 'little') == 1: #planes must be 1
+                depth = int.from_bytes(f.read(2), 'little')
+                if depth == 24 and int.from_bytes(f.read(4), 'little') == 0:#compress method == uncompressed
+                    print("Image size: w{} x h{}".format(width, height))
+                    rowsize = (width * 3 + 3) & ~3
+                    print('rowsize is {}'.format(rowsize))
+                    if height < 0:
+                        height = -height
+                        flip = False
+                    else:
+                        flip = True
+                    w, h = width, height
+                    
+                    for row in reversed(range(h)):
+                        if flip:
+                            pos = offset + (height - 1 - row) * rowsize
+                        else:
+                            pos = offset + row * rowsize
+                        if f.tell() != pos:
+                            dummy = f.seek(pos)
+                        for col in range(w):
+                            bgr = f.read(3)
+                            rgb_color = st7735.color565(bgr[2], bgr[1], bgr[0])
+                            buf[row*w*2 + col*2] = rgb_color >> 8
+                            buf[row*w*2 + col*2 + 1] = rgb_color
+                else:
+                    print('not 24bit bmp.')
+            page1.load(buf)
+            page0.blit(page1, 10, 10)
+
+            while 1:
+                page0.blit(page1, random.randint(0, 160), random.randint(0, 80))
+                page0.show(0, 0)          
