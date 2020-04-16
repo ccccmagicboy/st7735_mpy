@@ -337,7 +337,7 @@ def test_framebuf_pic0():
             # while 1:
                 # page0.show(random.randint(0, 160), random.randint(0, 80))            
 
-    with open('/sd/qq_logo_24bit.bmp', 'rb') as f:
+    with open('/sd/skull-and-crossbones.bmp', 'rb') as f:
         if f.read(2) == b'BM':  #header
             dummy = f.read(8) #file size(4), creator bytes(4)
             offset = int.from_bytes(f.read(4), 'little')
@@ -378,5 +378,6 @@ def test_framebuf_pic0():
             page0.blit(page1, 10, 10)
 
             while 1:
-                page0.blit(page1, random.randint(0, 160), random.randint(0, 80))
-                page0.show(0, 0)          
+                page0.blit(page1, random.randint(0, 160), random.randint(0, 80), st7735.WHITE)
+                page0.show(0, 0)
+                time.sleep_ms(100)
