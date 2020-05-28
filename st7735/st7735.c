@@ -739,19 +739,19 @@ STATIC mp_obj_t st7735_ST7735_vscrdef(size_t n_args, const mp_obj_t *args) {
     
     if (tfa >= 162)
     {
-        mp_raise_ValueError("top fix area must be less than 162.");
+        mp_raise_ValueError(MP_ERROR_TEXT("top fix area must be less than 162."));
     }
     
     if (tfa >= 162)
     {
-        mp_raise_ValueError("bottom fix area must be less than 162.");
+        mp_raise_ValueError(MP_ERROR_TEXT("bottom fix area must be less than 162."));
     }
 
     vsa = 162 - tfa - bfa;
     
     if (vsa <= 0)
     {
-        mp_raise_ValueError("visible area must be more than 0.");
+        mp_raise_ValueError(MP_ERROR_TEXT("visible area must be more than 0."));
     }    
     
     uint8_t buf[6] = {0, (tfa) & 0xFF, 0, (vsa) & 0xFF, 0, (bfa) & 0xFF};
@@ -1009,11 +1009,11 @@ mp_obj_t st7735_ST7735_make_new(const mp_obj_type_t *type,
     self->rotation = args[ARG_rotation].u_int % 4;
 
     if ((self->display_height != 160 && self->display_height != 160) || (self->display_width != 80  && self->display_width != 80)) {
-        mp_raise_ValueError("Unsupported display. Only 80x160 is supported");
+        mp_raise_ValueError(MP_ERROR_TEXT("Unsupported display. Only 80x160 is supported"));
     }
 
     if (args[ARG_dc].u_obj == MP_OBJ_NULL) {
-        mp_raise_ValueError("must specify dc pins");
+        mp_raise_ValueError(MP_ERROR_TEXT("must specify dc pins"));
     }
 
     self->dc = mp_hal_get_pin_obj(args[ARG_dc].u_obj);
